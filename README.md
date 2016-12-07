@@ -1,6 +1,6 @@
 
 Deploy to Blumix <br>
-<a href="https://bluemix.net/deploy?repository="https://github.com/Mike-msoh/microsite-template.git"><img src="https://bluemix.net/deploy/button.png" alt="Deploy to Bluemix"></a>
+<a href="https://bluemix.net/deploy?repository=https://github.com/Mike-msoh/microsite-template.git"><img src="https://bluemix.net/deploy/button.png" alt="Deploy to Bluemix"></a>
 
 Bluemix Java Application - Basic - Working Code
 ===
