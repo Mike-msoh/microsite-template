@@ -1,7 +1,9 @@
+
+Deploy to Blumix 
+<a href="https://bluemix.net/deploy?repository="https://github.com/Mike-msoh/microsite-template.git"><img src="https://bluemix.net/deploy/button.png" alt="Deploy to Bluemix"></a>
+
 Bluemix Java Application - Basic - Working Code
 ===
-
-<a href="https://bluemix.net/deploy?repository="https://github.com/Mike-msoh/microsite-template.git"&branch=<git_branch>" # [required]><img src="https://bluemix.net/deploy/button.png" alt="Deploy to Bluemix"></a>
 
 # Privacy Notice
 
