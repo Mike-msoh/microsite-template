@@ -1,0 +1,8 @@
+applications:
+- path: target/jpbackendmsktemplate.war
+  memory: 512M
+  instances: 1
+  domain: mybluemix.net
+  name: microsite-template
+  host: microsite-template
+  disk_quota: 1024M
