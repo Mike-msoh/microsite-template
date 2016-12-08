@@ -1,3 +1,8 @@
+declared-services:
+  dashDB-nodesample:
+    label: dashDB
+    plan: Entry
+
 applications:
 - path: jpbackendmsktemplate.war
   memory: 512M
@@ -6,3 +11,6 @@ applications:
   name: microsite-template
   host: microsite-template
   disk_quota: 1024M
+
+services:
+- dashDB-microsite
