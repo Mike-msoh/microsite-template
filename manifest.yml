@@ -1,5 +1,5 @@
 declared-services:
-  dashDB-nodesample:
+  dashDB-microsite:
     label: dashDB
     plan: Entry
 
