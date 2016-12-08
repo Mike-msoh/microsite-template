@@ -23,6 +23,7 @@ import java.sql.ResultSet;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
@@ -38,7 +39,8 @@ import org.json.JSONException;
 public class ServiceAPI {
 
 	@Path("/login")
-	@POST
+//	@POST
+	@GET
 	public String checkLogin(String creds) {
 		
 		System.out.println("checkLogin () ");
