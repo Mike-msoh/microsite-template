@@ -15,12 +15,24 @@
  */
 package com.ibm.bluemix.mobilestarterkit.service;
 
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONException;
+
+//import com.ibm.json.java.JSONArray;
+//import com.ibm.json.java.JSONObject;
+
 
 @Path("/service")
 public class ServiceAPI {
@@ -28,11 +40,18 @@ public class ServiceAPI {
 	@Path("/login")
 	@POST
 	public String checkLogin(String creds) {
+		
+		System.out.println("checkLogin () ");
+		
 		try {
 			JSONObject credentials = new JSONObject(creds);
 			String userID = credentials.getString("user_id");
 			String password = credentials.getString("password");
 			if (userID.equals("admin") && password.equals("password")) {
+				
+				// Insert log into LogTable
+				saveLog();
+				
 				return "Successful";
 			} else {
 				return "Failed";
@@ -45,6 +64,86 @@ public class ServiceAPI {
 
 		}
 	}
+	
+	private void saveLog(){
+
+		System.out.println("saveLog () ");
+		
+		
+		String lookupName = null;
+		try {
+			com.ibm.json.java.JSONObject vcap = getVcapServices();
+			if(vcap.get("dashDB") != null) {
+				JSONObject dashDB0 = (JSONObject)((JSONArray)vcap.get("dashDB")).get(0);
+				String luName = (String)dashDB0.get("name");
+				if(luName != null) {
+					lookupName = "jdbc/"+luName;
+				}
+			}
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		DataSource dataSource = null ; 
+		
+		try  { 
+			javax.naming.Context ctx = new InitialContext (); 
+            if(lookupName != null) {
+            	dataSource = (DataSource )ctx.lookup(lookupName); 
+            } else {
+            	dataSource = (DataSource )ctx.lookup( "jdbc/dashDB-microsite" ); 
+            }
+            
+        }  catch  (NamingException e)  { 
+            e.printStackTrace (); 
+        }
+		
+		try {
+			Connection conn = dataSource.getConnection();
+			PreparedStatement stmt = conn.prepareStatement("SELECT TABNAME,TABSCHEMA FROM SYSCAT.TABLES FETCH FIRST 10 ROWS ONLY");
+			ResultSet rs = stmt.executeQuery();
+			
+			System.out.println("Result set : " + rs);
+			
+			if(rs!=null){
+			
+				while(rs.next()) {
+					System.out.println("colume 0: " + rs.getString(0));
+					System.out.println("colume 1: " + rs.getString(1));
+					System.out.println("colume 2 " + rs.getString(2));
+					System.out.println("colume 3: " + rs.getString(3));
+				}
+			}else {
+				
+				PreparedStatement createStm = conn.prepareStatement("CREATE TABLE USER_LOG(PAGE_ADDRESS VARCHAR (200), IP_ADDRESS VARCHAR (20), BROWSER VARCHAR (200), ACCESS_TIME DATE)");
+				createStm.executeQuery();
+			}
+	
+		
+	
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		
+	}
+	
+	private com.ibm.json.java.JSONObject getVcapServices() {
+		String vcap = System.getenv("VCAP_SERVICES");
+		if (vcap == null) return null;
+		com.ibm.json.java.JSONObject vcapObject = null;
+		try {
+			vcapObject = com.ibm.json.java.JSONObject.parse(vcap);
+			
+		} catch (IOException e) {
+			String message = "Error parsing VCAP_SERVICES: ";
+			//logger.log(Level.SEVERE, message + e.getMessage(), e);
+//			logger.info("{}", message + e.getMessage(), e);
+		}
+		return vcapObject;
+}
 
 	@Path("/searchtips")
 	@POST
