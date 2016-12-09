@@ -37,14 +37,17 @@ import org.json.JSONException;
 public class ServiceAPI {
 
 	@Path("/login")
-//	@POST
-	@GET
+	@POST
 	public String checkLogin(String creds) {
 		
 		System.out.println("checkLogin () ");
 		
+		String PAGE_ADDRESS = "www.myibmpage.com";
+		String IP_ADDRESS = "192.168.22.23";
+		String BROWSER = "firefox";
+				
 		// Insert log into LogTable
-		saveLog();
+		saveLog(PAGE_ADDRESS, IP_ADDRESS, BROWSER);
 		
 		try {
 			JSONObject credentials = new JSONObject(creds);
@@ -58,17 +61,20 @@ public class ServiceAPI {
 			}
 
 		} catch (JSONException e) {
-
 			e.getStackTrace();
 			return "Failed";
 
 		}
 	}
 	
-	private void saveLog(){
+	private void saveLog(String PAGE_ADDRESS, String IP_ADDRESS, String BROWSER){
 
 		System.out.println("saveLog () ");
 		
+		/*
+		 * Look up DB for dashDB to connect with VCAP_Service
+		 * 
+		 */
 		
 		String lookupName = null;
 		try {
@@ -100,6 +106,12 @@ public class ServiceAPI {
             e.printStackTrace (); 
         }
 		
+		
+		/*
+		 * Check if USER_LOG table exists in DashDB
+		 * 
+		 */
+		
 		try {
 			Connection conn = dataSource.getConnection();
 			PreparedStatement stmt = conn.prepareStatement("SELECT TABNAME,TABSCHEMA FROM SYSCAT.TABLES where TABNAME = 'USER_LOG'");
@@ -118,18 +130,28 @@ public class ServiceAPI {
 				tableExist = false;
 			}
 			
+			/*
+			 * If there is no table, create it.
+			 * 
+			 */
 			if(!tableExist){
 				System.out.println("table NOT exist ");
 				
 				Statement crtStatement = conn.createStatement();
-				String crtSql = "CREATE TABLE USER_LOG(PAGEADDRESS CHAR (80), IPADDRESS CHAR (20), BROWSER CHAR (200), ACCESSTIME DATE)" ;
+				String crtSql = "CREATE TABLE USER_LOG(PAGE_ADDRESS CHAR (80), IP_ADDRESS CHAR (20), BROWSER CHAR (200), ACCESS_TIME DATE)" ;
 				crtStatement.executeUpdate(crtSql);
 				
 				System.out.println("Create done!!");
 			}
 			
+			
+			/*
+			 * Insert Log information
+			 * 
+			 */
 			Statement insertStatement = conn.createStatement();
-			String insertSql = "INSERT INTO USER_LOG (PAGEADDRESS, IPADDRESS, BROWSER, ACCESSTIME) VALUES ('www.mypage.com', '192.168.22.23', 'firefox', CURRENT TIMESTAMP)";
+			String insertSql = "INSERT INTO USER_LOG (PAGE_ADDRESS, IP_ADDRESS, BROWSER, ACCESS_TIME) VALUES (" 
+								+ PAGE_ADDRESS + "," + IP_ADDRESS + "," + BROWSER + ",  CURRENT TIMESTAMP)";
 			insertStatement.executeUpdate(insertSql);
 			
 		} catch (Exception e) {
