@@ -138,7 +138,7 @@ public class ServiceAPI {
 				System.out.println("table NOT exist ");
 				
 				Statement crtStatement = conn.createStatement();
-				String crtSql = "CREATE TABLE USER_LOG(PAGE_ADDRESS CHAR (80), IP_ADDRESS CHAR (20), BROWSER CHAR (200), ACCESS_TIME DATE)" ;
+				String crtSql = "CREATE TABLE USER_LOG(PAGE_ADDRESS CHAR (80), IP_ADDRESS CHAR (20), BROWSER CHAR (200), ACCESS_TIME TIMESTAMP)" ;
 				crtStatement.executeUpdate(crtSql);
 				
 				System.out.println("Create done!!");
@@ -150,8 +150,8 @@ public class ServiceAPI {
 			 * 
 			 */
 			Statement insertStatement = conn.createStatement();
-			String insertSql = "INSERT INTO USER_LOG (PAGE_ADDRESS, IP_ADDRESS, BROWSER, ACCESS_TIME) VALUES (" 
-								+ PAGE_ADDRESS + "," + IP_ADDRESS + "," + BROWSER + ",  CURRENT TIMESTAMP)";
+			String insertSql = "INSERT INTO USER_LOG (PAGE_ADDRESS, IP_ADDRESS, BROWSER, ACCESS_TIME) VALUES ('"
+								+ PAGE_ADDRESS + "','" + IP_ADDRESS + "','" + BROWSER + "',  CURRENT TIMESTAMP)";
 			insertStatement.executeUpdate(insertSql);
 			
 		} catch (Exception e) {
