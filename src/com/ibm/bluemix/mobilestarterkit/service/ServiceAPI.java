@@ -40,8 +40,6 @@ public class ServiceAPI {
 	@POST
 	public String checkLogin(String creds) {
 		
-		System.out.println("checkLogin () ");
-		
 		String PAGE_ADDRESS = "www.myibmpage.com";
 		String IP_ADDRESS = "192.168.22.23";
 		String BROWSER = "firefox";
@@ -68,8 +66,6 @@ public class ServiceAPI {
 	}
 	
 	private void saveLog(String PAGE_ADDRESS, String IP_ADDRESS, String BROWSER){
-
-		System.out.println("saveLog () ");
 		
 		/*
 		 * Look up DB for dashDB to connect with VCAP_Service
@@ -121,7 +117,6 @@ public class ServiceAPI {
 			
 			if(rs!=null){
 				while(rs.next()) {
-					System.out.println("table name : " + rs.getString(1));
 					if(rs.getString(1).equals("USER_LOG")){
 						tableExist = true;
 					}
@@ -135,13 +130,9 @@ public class ServiceAPI {
 			 * 
 			 */
 			if(!tableExist){
-				System.out.println("table NOT exist ");
-				
 				Statement crtStatement = conn.createStatement();
 				String crtSql = "CREATE TABLE USER_LOG(PAGE_ADDRESS CHAR (80), IP_ADDRESS CHAR (20), BROWSER CHAR (200), ACCESS_TIME TIMESTAMP)" ;
 				crtStatement.executeUpdate(crtSql);
-				
-				System.out.println("Create done!!");
 			}
 			
 			
